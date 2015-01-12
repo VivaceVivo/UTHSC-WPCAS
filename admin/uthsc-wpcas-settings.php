@@ -100,6 +100,15 @@ function uthsc_wpcas_preferences() {
 					<p>Array indexes returned by cas that will be used as args for wp_insert() when new users are created. WordPress username will use uid returned by CAS.</p>
 					<ul>
 						<li>
+							<label for="uthsc_wpcas_uid">UID</label>
+							<input
+								type="text"
+								name="uthsc_wpcas_uid"
+								value="<?php echo get_option('uthsc_wpcas_uid')?>"
+								id="uthsc_wpcas_uid"
+							/>
+						</li>
+						<li>
 							<label for="uthsc_wpcas_first_name">First Name</label>
 							<input
 								type="text"

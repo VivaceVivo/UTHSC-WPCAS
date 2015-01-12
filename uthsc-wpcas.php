@@ -34,14 +34,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //Checks if the plugin class has already been defined. If not, it defines it here.
 //This is to avoid class name conflicts within WordPress and plugins.
-if ( !class_exists('UTHSCWPCAS') ) {
+
+
+//phpinfo();
+//debug_print_backtrace();
+//die();
+//if ( !class_exists('UTHSCWPCAS') ) {
 
 	class UTHSCWPCAS {
 
 		public function __construct() {
-			
+
 			add_action('login_init',array($this, 'bypass_login'));
-			
 			
 			//Hook into WordPress authentication system
 			$this -> wp_cas_authentication_hooks();
@@ -63,6 +67,7 @@ if ( !class_exists('UTHSCWPCAS') ) {
 			}
 			
 			if ( get_option( 'uthsc_wpcas_host' ) ) {
+				error_log("initializing SSO: " . get_option( 'uthsc_wpcas_host' ), 0);
 				//Initialize phpCAS
 				$this->initialize_phpCAS();
 			}
@@ -71,17 +76,17 @@ if ( !class_exists('UTHSCWPCAS') ) {
 			require_once('admin/uthsc-wpcas-options.php');
 		}
 
-		function wp_cas_authentication_hooks(){
+		protected function wp_cas_authentication_hooks(){
 			//add_action('init', array('UTHSCWPCAS', 'lock_down_check'));
-			add_filter('authenticate', array('UTHSCWPCAS', 'authenticate'), 10, 3);
-			add_action('wp_logout', array('UTHSCWPCAS', 'logout'));
+			add_filter('authenticate', array(&$this, 'authenticate'), 10, 3);
+			add_action('wp_logout', array(&$this, 'logout'));
 			add_action('lost_password', array('UTHSCWPCAS', 'disable_function'));
 			add_action('retrieve_password', array('UTHSCWPCAS', 'disable_function'));
 			add_action('password_reset', array('UTHSCWPCAS', 'disable_function'));
-			add_filter('show_password_fields', array('UTHSCWPCAS', 'show_password_fields'));
+			add_filter('show_password_fields', array(&$this, 'show_password_fields'));
 			add_action('check_passwords', array('UTHSCWPCAS', 'check_passwords'), 10, 3);
-			add_filter('wp_signon', array('UTHSCWPCAS', 'authenticate'),10,3);
-			add_filter('login_url', array('UTHSCWPCAS', 'wpcas_login_url'),10,3);
+			add_filter('wp_signon', array(&$this, 'authenticate'),10,3);
+			add_filter('login_url', array(&$this, 'wpcas_login_url'),10,3);
 		}
 
 		//Register settings in lib/wpcas-options.php
@@ -101,6 +106,7 @@ if ( !class_exists('UTHSCWPCAS') ) {
 			
 			foreach ( $wpcas_options->uthsc_wpcas_settings() as $group => $options) {
 				foreach ($options as $option => $default){
+					// error_log($option . " -> " . $default, 0);
 					update_option($option, $default);
 				}
 			}
@@ -129,7 +135,7 @@ if ( !class_exists('UTHSCWPCAS') ) {
 			}
 		}
 
-		function add_options_pages() {
+		public function add_options_pages() {
 			$icon = plugin_dir_url( __FILE__ ).'img/cas-logo.png';
 
 			add_menu_page('UTHSC WP CAS', 'UTHSC WP CAS', 'administrator', 'uthsc-wpcas-settings', 'uthsc_wpcas_preferences', $icon, '98.9');
@@ -137,9 +143,10 @@ if ( !class_exists('UTHSCWPCAS') ) {
 			add_submenu_page('uthsc-wpcas-settings', 'About', 'About', 'administrator', 'uthsc-wpcas-about', 'uthsc_wpcas_about');		
 		}
 
-		function bypass_login(){
+		public function bypass_login(){
 			if ( ! phpCAS::isAuthenticated() ) {
-				if ($_GET['redirect_to']) {
+				
+				if (isset($_GET['redirect_to']) && $_GET['redirect_to']) {
 					$redirect = wp_login_url( $_GET['redirect_to'] );
 				} else {
 					$redirect = wp_login_url(); //TO DO: Add default redirect?
@@ -148,9 +155,10 @@ if ( !class_exists('UTHSCWPCAS') ) {
 			}
 		}
 
-		function wpcas_login_url($redirect = '', $force_reauth = false) {
+		public function wpcas_login_url($redirect = '', $force_reauth = false) {
 			$login_url = site_url('wp-login.php', 'login');
-		
+			//error_log("login_url: " . $login_url, 0);
+			
 			if ( !empty($redirect) ) {
 
 				if (get_permalink()){
@@ -162,11 +170,11 @@ if ( !class_exists('UTHSCWPCAS') ) {
 
 			}
 
-			return 'https://'. get_option('uthsc_wpcas_host') . get_option('uthsc_wpcas_context') . '/login?service='. $login_url;
+			return 'https://'. get_option('uthsc_wpcas_host') .":" . get_option('uthsc_wpcas_port')  . get_option('uthsc_wpcas_context') . '/login?service='. $login_url;
 
 		}
 
-		function initialize_phpCAS() {
+		protected function initialize_phpCAS() {
 
 			//This comes from phpCAS's authpage.php example but instead of using the options from config.php we get the wordpress options that are set in the plugin admin section.
 			//If you want to test CAS to see if it's working, you can use the authpage.php included in the plugin directory.
@@ -182,12 +190,12 @@ if ( !class_exists('UTHSCWPCAS') ) {
 			
 			// For production use set the CA certificate that is the issuer of the cert
 			// on the CAS server and uncomment the line below
-			phpCAS::setCasServerCACert(get_option('uthsc_wpcas_cert_path'));
+			//phpCAS::setCasServerCACert(get_option('uthsc_wpcas_cert_path'));
 
 			// For quick testing you can disable SSL validation of the CAS server.
 			// THIS SETTING IS NOT RECOMMENDED FOR PRODUCTION.
 			// VALIDATING THE CAS SERVER IS CRUCIAL TO THE SECURITY OF THE CAS PROTOCOL!
-			//phpCAS::setNoCasServerValidation();
+			phpCAS::setNoCasServerValidation();
 
 			// Handle SAML logout requests that emanate from the CAS host exclusively.
 			// Failure to restrict SAML logout requests to authorized hosts could
@@ -196,22 +204,25 @@ if ( !class_exists('UTHSCWPCAS') ) {
 			phpCAS::handleLogoutRequests(true, array('cas-real-1.example.com', 'cas-real-2.example.com'));
 
 			// Uncomment to enable debugging		
-			//phpCAS::setDebug( dirname( __FILE__ ) . "/" );
+			phpCAS::setDebug( dirname( __FILE__ ) . "/cas.log" );
 
 		}
 
-		function authenticate($login_url) {
+		public function authenticate($login_url) {
 
 			if ( phpCAS::isAuthenticated() ) {
 
 				$cas_user = phpCAS::getUser();
 				$cas_attributes = phpCAS::getAttributes();
 
+				// error_log("user: " . $cas_user, 0);
+				// error_log("cas_attributes: " . implode ( "# " , $cas_attributes ), 0);
+
 				//This is based on the CAS reponse; it may be different for your configuration.
 				//To test, you can use var_dump($cas_attributes)
 				$userdata = array (
 				'user_login'		=>	$cas_user,
-				'last_name'		=>	$cas_attributes[get_option('uthsc_wpcas_last_name')],
+				'last_name'			=>	$cas_attributes[get_option('uthsc_wpcas_last_name')],
 				'first_name'		=>	is_array( $cas_attributes[get_option('uthsc_wpcas_first_name')] ) ? $cas_attributes[get_option('uthsc_wpcas_first_name')]['1'] : $cas_attributes[get_option('uthsc_wpcas_first_name')],
 				'user_email'		=>	$cas_attributes[get_option('uthsc_wpcas_user_email')]
 				);
@@ -220,8 +231,8 @@ if ( !class_exists('UTHSCWPCAS') ) {
 				if ( !get_user_by( 'login', $cas_user ) ) {
 					wp_insert_user( $userdata );
 				}
-
-				return get_user_by( 'login', $cas_attributes['uid'] );
+				
+				return get_user_by( 'login', $cas_user); // was: $cas_attributes['uid'] );
 
 			} else {
 				
@@ -237,14 +248,23 @@ if ( !class_exists('UTHSCWPCAS') ) {
 
 		}
 
+		public static function readCasUID() {
+			$cas_user = phpCAS::getUser();
+			$cas_attributes = phpCAS::getAttributes();
+			$uid_option = get_option('uthsc_wpcas_uid');
+			error_log("$cas_user: " . $cas_user , 0);
+			return ($uid_option === "cas_user") ? $cas_user : $cas_attributes[$uid_option];
+			
+		}
+
 		//Custom logout function to bypass WordPress default logout and provide a custom redirect target (needs work).
-		function logout(){
+		public function logout(){
 
 			wp_set_current_user(0);
 			wp_clear_auth_cookie();
 
 			if ($_GET['action']=='logout') {
-				if ($_GET['redirect_to']) {
+				if (isset($_GET['redirect_to']) && $_GET['redirect_to']) {
 					phpCAS::logoutWithRedirectService($_GET['redirect_to']);
 				} else {
 					phpCAS::logoutWithRedirectService(site_url());
@@ -256,16 +276,16 @@ if ( !class_exists('UTHSCWPCAS') ) {
 
 		//Disables display of password fields in the user profile page.
 		//We don't use WP authentication, so we don't need to worry about any WP-specific passwords.
-		function show_password_fields( $show_password_fields ) {
+		public function show_password_fields( $show_password_fields ) {
 			return false;
 		}
 
 		//Utility function to disable WP behaviors.
-		function disable_function() {
+		public function disable_function() {
 			die('Disabled');
 		}
 	}
-}
+//}
 
 register_activation_hook( __FILE__, array( 'UTHSCWPCAS', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'UTHSCWPCAS', 'deactivate' ) );

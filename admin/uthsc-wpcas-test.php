@@ -82,7 +82,9 @@ function uthsc_wpcas_test() {
 			if (phpCAS::isAuthenticated()) {
 
 				$cas_attributes = phpCAS::getAttributes();
-				$wp_attributes = get_user_by( 'login', $cas_attributes['uid']);
+			
+				$wp_attributes = get_user_by( 'login', UTHSCWPCAS::readCasUID());
+				
 				$wp_display_attributes = array('ID', 'user_login', 'user_email', 'user_registered');
 
 				foreach ($wp_display_attributes as $attribute) {
@@ -94,7 +96,7 @@ function uthsc_wpcas_test() {
 				echo $error;
 
 			}
-				
+			
 			?>
 
 		</ul>
