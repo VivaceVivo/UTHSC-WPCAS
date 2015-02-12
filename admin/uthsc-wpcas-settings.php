@@ -147,12 +147,8 @@ function uthsc_wpcas_preferences() {
 
 				settings_fields( 'uthsc-wpcas-plugin-options' );
 
-				?>
-
-				<h2>Work in Progress</h2>
-				<p>None of these settings do anything yet; these are just ideas right now and should be relatively easy to add.<br />
-				If you have ideas or would like to contribute check out the <a href="https://github.com/uthsc/uthsc-wpcas">UTHSC-WPCAS Repo</a> on GitHub</p>
-
+			
+				/*
 				<fieldset>
 					<h3>To Do: CAS Lockdown</h3>
 					<p>If this is turned on, users will be forced to log in to see the site</p>
@@ -178,10 +174,11 @@ function uthsc_wpcas_preferences() {
 						</li>
 					</ul>
 				</fieldset>
-
+				*/
+				?>
 				<fieldset>
-					<h3>To Do: Update WordPress Account on Login</h3>
-					<p>Checks WordPress account attributes against attributes returned by CAS and updates them if they are different.</p>
+					<h3>Update WordPress Account on Login</h3>
+					<p>Updates WordPress profile on every login.</p>
 					<ul>
 						<li>
 								<label for="uthsc_wpcas_update_acct_off">Off</label>
@@ -194,7 +191,7 @@ function uthsc_wpcas_preferences() {
 
 				<fieldset>
 					<h3>Customer 360 - Profile page</h3>
-					<p>Url of the Profile page.</p>
+					<p>Url of the (optional) CAS-Profile page. </p>
 					<ul>
 						<li>
 								<label for="uthsc_wpcas_profil_page">URL</label>
@@ -210,7 +207,7 @@ function uthsc_wpcas_preferences() {
 
 				<fieldset>
 					<h3>Native Login</h3>
-					<p>Pages matching the given pattern use the standard WordPress login.</p>
+					<p>Pages matching the given pattern use the standard WordPress login. (leave empty to turn off native login)</p>
 					<ul>
 						<li>
 								<label for="uthsc_wpcas_native_login_url_pattern">substring</label>
