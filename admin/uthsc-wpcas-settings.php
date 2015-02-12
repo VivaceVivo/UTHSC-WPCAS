@@ -192,6 +192,38 @@ function uthsc_wpcas_preferences() {
 					</ul>
 				</fieldset>
 
+				<fieldset>
+					<h3>Customer 360 - Profile page</h3>
+					<p>Url of the Profile page.</p>
+					<ul>
+						<li>
+								<label for="uthsc_wpcas_profil_page">URL</label>
+								<input
+								type="text"
+								name="uthsc_wpcas_profil_page"
+								value="<?php echo get_option('uthsc_wpcas_profil_page')?>"
+								id="uthsc_wpcas_profil_page"
+							/>
+						</li>
+					</ul>
+				</fieldset>
+
+				<fieldset>
+					<h3>Native Login</h3>
+					<p>Pages matching the given pattern use the standard WordPress login.</p>
+					<ul>
+						<li>
+								<label for="uthsc_wpcas_native_login_url_pattern">substring</label>
+								<input
+								type="text"
+								name="uthsc_wpcas_native_login_url_pattern"
+								value="<?php echo get_option('uthsc_wpcas_native_login_url_pattern')?>"
+								id="uthsc_wpcas_native_login_url_pattern"
+							/>
+						</li>
+					</ul>
+				</fieldset>
+
 				<?php	
 
 			} // end if/else

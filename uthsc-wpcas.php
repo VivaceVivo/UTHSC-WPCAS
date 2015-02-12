@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: UTHSC WPCAS
- * Plugin URI: https://github.com/uthsc/uthsc-wpcas
+ * Plugin Name: Customer 360 - WPCAS
+ * Plugin URI: https://github.com/VivaceVivo/UTHSC-WPCAS
  * Description: A plugin that uses phpCAS to integrate CAS with WordPress.
- * Author: George Spake - UTHSC
- * Version: 0.2.2
- * Author URI: http://uthsc.edu/
+ * Author: George Spake - UTHSC, Patrick Trapp - CGI
+ * Version: 0.3.0
+ * Author URI: http://cgi.com/
  * License: GPLv3
 */
 
@@ -29,17 +29,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //To Do:
 //Lockdown option to restrict users who aren't authenticated
 //Update user info if cas response doesn't match user account
-//Restrict access to users who already have WordPress accounts (WP Accounts must be entered manually before users can Authenticate with CAS)
+// (Restrict access to users who already have WordPress accounts (WP Accounts must be entered manually before users can Authenticate with CAS) )
 
 
 //Checks if the plugin class has already been defined. If not, it defines it here.
 //This is to avoid class name conflicts within WordPress and plugins.
 
 
-//phpinfo();
-//debug_print_backtrace();
-//die();
-//if ( !class_exists('UTHSCWPCAS') ) {
+if ( !class_exists('UTHSCWPCAS') ) {
 
 	class UTHSCWPCAS {
 
@@ -74,19 +71,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			//Get wpcas options
 			require_once('admin/uthsc-wpcas-options.php');
+
+			// Get wpcas widget
+			require_once('wpcas-widget.php');
 		}
 
 		protected function wp_cas_authentication_hooks(){
 			//add_action('init', array('UTHSCWPCAS', 'lock_down_check'));
 			add_filter('authenticate', array(&$this, 'authenticate'), 10, 3);
+			add_filter('wp_signon', array(&$this, 'authenticate'),10,3);
+
 			add_action('wp_logout', array(&$this, 'logout'));
 			add_action('lost_password', array('UTHSCWPCAS', 'disable_function'));
 			add_action('retrieve_password', array('UTHSCWPCAS', 'disable_function'));
 			add_action('password_reset', array('UTHSCWPCAS', 'disable_function'));
 			add_filter('show_password_fields', array(&$this, 'show_password_fields'));
 			add_action('check_passwords', array('UTHSCWPCAS', 'check_passwords'), 10, 3);
-			add_filter('wp_signon', array(&$this, 'authenticate'),10,3);
+			
 			add_filter('login_url', array(&$this, 'wpcas_login_url'),10,3);
+			add_filter( 'register_url', array(&$this, 'wpcas_register_url'),10,3 );
+		}
+
+		public static function check_passwords() {
+			// TODO
 		}
 
 		//Register settings in lib/wpcas-options.php
@@ -144,6 +151,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		public function bypass_login(){
+			error_log("bypass_login... ", 0);
 			if ( ! phpCAS::isAuthenticated() ) {
 				
 				if (isset($_GET['redirect_to']) && $_GET['redirect_to']) {
@@ -156,8 +164,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		public function wpcas_login_url($redirect = '', $force_reauth = false) {
+			$pattern = get_option('uthsc_wpcas_native_login_url_pattern');
+			if($pattern){
+				if( strpos ($_SERVER["REQUEST_URI"], $pattern ) ) {	
+						
+					error_log("login URL: " . site_url('wp-login.php', 'login'), 0);
+					return site_url('wp-login.php', 'login'). "?doNativeLogin=true";
+				}
+			}
+			
 			$login_url = site_url('wp-login.php', 'login');
-			//error_log("login_url: " . $login_url, 0);
 			
 			if ( !empty($redirect) ) {
 
@@ -171,6 +187,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 
 			return 'https://'. get_option('uthsc_wpcas_host') .":" . get_option('uthsc_wpcas_port')  . get_option('uthsc_wpcas_context') . '/login?service='. $login_url;
+
+		}
+
+		public function wpcas_register_url($redirect = '', $force_reauth = false) {
+			$redirect_url = site_url('wp-login.php', 'login');
+			
+			if ( !empty($redirect) ) {
+
+				if (get_permalink()){
+					$redirect = get_permalink();
+				} else {
+				 	$redirect = $redirect_url;
+				}
+					$redirect_url = add_query_arg('redirect_to', urlencode($redirect), $redirect_url);
+
+			}
+
+			return 'https://'. get_option('uthsc_wpcas_host') .":" . get_option('uthsc_wpcas_port')  . get_option('uthsc_wpcas_context') . '/register?service='. $redirect_url;
 
 		}
 
@@ -209,7 +243,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		public function authenticate($login_url) {
-
+			error_log("authenticate... ", 0);
 			if ( phpCAS::isAuthenticated() ) {
 
 				$cas_user = phpCAS::getUser();
@@ -230,19 +264,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				//If the user hasn't logged in to Wordpress before, create an account with the Attributes returned by cas
 				if ( !get_user_by( 'login', $cas_user ) ) {
 					wp_insert_user( $userdata );
+				} else if(get_option('uthsc_wpcas_update_acct') == 'on'){
+					$account = get_user_by( 'login', $cas_user );
+					$userdata['ID'] = $account->get('ID');
+					wp_update_user( $userdata );
 				}
 				
 				return get_user_by( 'login', $cas_user); // was: $cas_attributes['uid'] );
 
 			} else {
-				
 				//trim reauth from service url to prevent users from being redirected back to WP login screen after logging in.
 	 			if ( preg_match("/&reauth=1/", $login_url) ) {
 				  $login_url = rtrim($login_url,'&reauth=1');
 				}
-
+				
 				//return the login url
-				return 'https://'. get_option('uthsc_wpcas_host') . get_option('uthsc_wpcas_context') . '/login?service='. $login_url;				
+				return 'https://'. get_option('uthsc_wpcas_host') . get_option('uthsc_wpcas_context') . '/login?service='. $login_url;
 				
 			}
 
@@ -285,11 +322,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			die('Disabled');
 		}
 	}
-//}
+	 
+}
+// register widget
+add_action('widgets_init', create_function('', 'return register_widget("wp_sso_widget");'));
 
 register_activation_hook( __FILE__, array( 'UTHSCWPCAS', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'UTHSCWPCAS', 'deactivate' ) );
 register_uninstall_hook( __FILE__, array( 'UTHSCWPCAS', 'uninstall' ) );
 
 //Load plugin
-$uthscwpcas = new UTHSCWPCAS();
+if( strpos($_SERVER["REQUEST_URI"], "?doNativeLogin=true") == false ){		
+	$uthscwpcas = new UTHSCWPCAS();
+}

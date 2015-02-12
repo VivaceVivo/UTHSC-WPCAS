@@ -51,7 +51,7 @@ Frequently Asked Questions
 This plugin was developed for UTHSC because we wanted to integrate CAS in to WordPress and there weren't any existing, actively maintained, that worked for us.
 As we were working on it, we decided the WordPress community needed a go-to CAS plugin that works for everyone; that's what we want UTHSC-WPCAS to be.
 
-####Why did you use the phpCAS lirary?
+####Why did you use the phpCAS library?
 
 phpCAS,by JASIG, is the standard, vetted, php library for CAS, so rewriting it from scratch would be counterproductive.  
 It also makes the plugin easier to configure.
@@ -117,3 +117,14 @@ Special thanks
 David R. Poindexter III and Indiana University - During the development of this plugin, IU-WPCAS was one of the only CAS plugins for WordPress and provided a good bit of inspiration.
 
 Todd Barber and Billy Barnet @ UTHSC for all of their patience, support and good advice
+
+
+About the fork
+---
+
+We use a customized CAS-Version and added some ways to customize this plugin to fit our CAS responses.
+
+Changelog
+---
+
+0.3.0 initial version of this fork

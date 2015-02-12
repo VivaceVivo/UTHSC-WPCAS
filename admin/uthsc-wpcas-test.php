@@ -39,10 +39,8 @@ function uthsc_wpcas_test() {
 			<?php
 				
 			$error = '
-			<p style="color:red;"><strong>Something\'s wrong here. phpCAS::isAuthenticated() returned false. 
-			Try logging in with a different browser.  
-			You may want to test CAS outside of Wordpress to make sure everything works. 
-			For more info checkout the <a href="https://github.com/uthsc/UTHSC-WPCAS/tree/master/test" >UTHSC-WPCAS test directory on GitHub</a>. 
+			<p style="color:orange;"><strong> phpCAS::isAuthenticated() returned false. 
+			Try logging in with a SSO-Account (not native login).  
 			</strong></p>';
 
 			if (phpCAS::isAuthenticated()) {
