@@ -16,7 +16,7 @@ function uthsc_wpcas_test() {
 		<div id="icon-options-general" class="icon32"></div>
 		<h2>UTHSC WP CAS Test</h2>
 
-		<p>If UTHSC WPCAS and your CAS server are configured properly, this page should display the attributes returned by CAS.</p>
+		<p>If Customer 360 - WPCAS and your CAS server are configured properly, this page should display the attributes returned by CAS.</p>
 
 		<h3>Session Info</h3>
 		<p>Some session info. Because, why not?</p>
@@ -80,10 +80,10 @@ function uthsc_wpcas_test() {
 			if (phpCAS::isAuthenticated()) {
 
 				$cas_attributes = phpCAS::getAttributes();
-			
+				
 				$wp_attributes = get_user_by( 'login', UTHSCWPCAS::readCasUID());
 				
-				$wp_display_attributes = array('ID', 'user_login', 'user_email', 'user_registered');
+				$wp_display_attributes = array('ID', 'user_nicename', 'user_login', 'user_email', 'user_registered', 'user_url', 'display_name', 'user_status', 'user_activation_key');
 
 				foreach ($wp_display_attributes as $attribute) {
 					echo '<li>' . $attribute . ': <strong>' . $wp_attributes->data->$attribute . '</strong></li>';
@@ -99,6 +99,24 @@ function uthsc_wpcas_test() {
 
 		</ul>
 
+		<h3>WP User Meta Data</h3>
+		<p>These are some meta attributes of the WordPress user that corresponds with the UID returned by CAS.</p>
+		<ul>
+
+			<?php
+
+			if (phpCAS::isAuthenticated()) {
+				$wp_meta_attrs = array('nickname', 'first_name', 'last_name', 'description');
+				foreach ($wp_meta_attrs as $meta){
+					echo '<li>'. $meta. ': <strong>'. get_user_meta($wp_attributes->ID, $meta, true). '</strong></li>';
+				}
+			}	else {
+
+				echo $error;
+
+			}
+			
+			?>
 	</div>
 
 <?php

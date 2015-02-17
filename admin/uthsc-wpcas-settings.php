@@ -7,7 +7,7 @@ function uthsc_wpcas_preferences() {
 	<div class="wrap">
 		<div id="icon-options-general" class="icon32"></div>
 
-		<h2>UTHSC WPCAS Preferences</h2>
+		<h2>Customer 360 - WPCAS Preferences</h2>
 
 		<?php 
 		$active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : 'cas-configuration';  
@@ -129,12 +129,22 @@ function uthsc_wpcas_preferences() {
 						</li>
 
 						<li>
-							<label for="wpcas_user_email">Email</label>
+							<label for="uthsc_wpcas_user_email">Email</label>
 							<input
 								type="text"
 								name="uthsc_wpcas_user_email"
 								value="<?php echo get_option('uthsc_wpcas_user_email')?>"
 								id="uthsc_wpcas_user_email"
+							/>
+						</li>
+
+						<li>
+							<label for="uthsc_wpcas_nickname">Nickname</label>
+							<input
+								type="text"
+								name="uthsc_wpcas_nickname"
+								value="<?php echo get_option('uthsc_wpcas_nickname')?>"
+								id="uthsc_wpcas_nickname"
 							/>
 						</li>
 

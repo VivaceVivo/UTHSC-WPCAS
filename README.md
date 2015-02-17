@@ -1,12 +1,12 @@
-UTHSC WPCAS
+WP-SSO
 =========
 
 Contributors: gpspake  
 Donate Link: http://uthsc.edu  
-Tags: cas, authentication, central authentication service, phpCAS  
+Tags: cas, authentication, central authentication service, phpCAS, single sign-on, SSO  
 Requires at least: 3.0.1  
 Tested up to: 3.9  
-Stable tag: 0.2.2  
+Stable tag: 0.3.0  
 License: GPLv3  
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -34,7 +34,7 @@ Note: UTHSC WPCAS is meant to provide anyone already using CAS, and preferably p
 Some tweaks to your CAS server configuration may be necessary to take advantage of all of the CAS features. 
 So, while most of the settings can be changed in the admin panel, it's not necessarily an out-of-the-box plugin.
 
-Warning: UTHSC-WPCAS overrides WordPress authentication so you will not be able to log in normally once it is activated.
+Warning: WP-SSO overrides WordPress authentication so you will not be able to log in normally once it is activated.
 Make sure to keep a separate session open during configuration and testing so you can de-activate the plugin when necessary. 
 
 1. Upload `uthsc-wpcas` to the `/wp-content/plugins/` directory
@@ -119,10 +119,10 @@ David R. Poindexter III and Indiana University - During the development of this 
 Todd Barber and Billy Barnet @ UTHSC for all of their patience, support and good advice
 
 
-About the fork
+About the "Customer 360" fork
 ---
 
-We use a customized CAS-Version and added some ways to customize this plugin to fit our CAS responses.
+We use a customized CAS implementation and added some methods to customize this plugin to fit our CAS responses.
 
 Changelog
 ---

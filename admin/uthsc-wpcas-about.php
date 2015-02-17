@@ -8,10 +8,13 @@ function uthsc_wpcas_about() {
 		<h2>Customer 360 - WPCAS</h2>
 		<h3>This plugin enables WP login with the Customer 360 CAS Server. It is based on the UTHSC WPCAS-Plugin.</h3>
 		
-		<p>The plugin was extended to support also the older CAS-protocol and adds some features.</p>
-		<ul>
+		<p>The plugin was extended to support also the older CAS-protocol and adds some features:</p>
+		<ol>
 			<li>configurable mapping of the CAS-UID</li>
-		</ul>
+			<li>update of the wordpress profile on each login</li>
+			<li>Hybrid login (wordpress native login for selected path)</li>
+			<li>WP-CAS widget with login/logout, profile and registration link</li>
+		</ol>
 		<p>This plugin was developed for the University of Tennessee Health Science Center to integrate CAS with UTHSC WordPress sites.</p>
 	
 		<p>After looking around for existing plugins we realized that there were very few CAS plugins for WordPress and most of them were not being actively maintained.<br />

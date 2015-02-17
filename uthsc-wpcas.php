@@ -71,9 +71,6 @@ if ( !class_exists('UTHSCWPCAS') ) {
 
 			//Get wpcas options
 			require_once('admin/uthsc-wpcas-options.php');
-
-			// Get wpcas widget
-			require_once('wpcas-widget.php');
 		}
 
 		protected function wp_cas_authentication_hooks(){
@@ -157,7 +154,7 @@ if ( !class_exists('UTHSCWPCAS') ) {
 				if (isset($_GET['redirect_to']) && $_GET['redirect_to']) {
 					$redirect = wp_login_url( $_GET['redirect_to'] );
 				} else {
-					$redirect = wp_login_url(); //TO DO: Add default redirect?
+					$redirect = wp_login_url(); //TODO: Add default redirect?
 				}
 				header( 'Location: ' . $redirect );
 			}
@@ -255,19 +252,36 @@ if ( !class_exists('UTHSCWPCAS') ) {
 				//This is based on the CAS reponse; it may be different for your configuration.
 				//To test, you can use var_dump($cas_attributes)
 				$userdata = array (
+
+
+
+					// TODO PTR make all attibutes optional: last_name, first_name, user_email, user_nicename !!!
+
+
+					
 				'user_login'		=>	$cas_user,
 				'last_name'			=>	$cas_attributes[get_option('uthsc_wpcas_last_name')],
 				'first_name'		=>	is_array( $cas_attributes[get_option('uthsc_wpcas_first_name')] ) ? $cas_attributes[get_option('uthsc_wpcas_first_name')]['1'] : $cas_attributes[get_option('uthsc_wpcas_first_name')],
-				'user_email'		=>	$cas_attributes[get_option('uthsc_wpcas_user_email')]
+				'user_email'		=>	$cas_attributes[get_option('uthsc_wpcas_user_email')],
+			    'user_nicename'		=>	(get_option('uthsc_wpcas_nickname')) ? 
+			            (isset($cas_attributes[get_option('uthsc_wpcas_nickname')]) ? $cas_attributes[get_option('uthsc_wpcas_nickname')] : 
+			            	"") : ""
 				);
 
 				//If the user hasn't logged in to Wordpress before, create an account with the Attributes returned by cas
 				if ( !get_user_by( 'login', $cas_user ) ) {
+					$user_pass = wp_generate_password( 12, false );
+					$userdata['user_pass'] = $user_pass;
+					$userdata = $this->prepareNicename($userdata);
 					wp_insert_user( $userdata );
 				} else if(get_option('uthsc_wpcas_update_acct') == 'on'){
 					$account = get_user_by( 'login', $cas_user );
 					$userdata['ID'] = $account->get('ID');
-					wp_update_user( $userdata );
+					if ( $this->hasChangedAttributes($userdata, $account) ){
+						error_log("Rewriting wordpress profile. " . $cas_user, 0);
+						$userdata = $this->prepareNicename($userdata);
+						wp_update_user( $userdata );
+					}
 				}
 				
 				return get_user_by( 'login', $cas_user); // was: $cas_attributes['uid'] );
@@ -285,13 +299,39 @@ if ( !class_exists('UTHSCWPCAS') ) {
 
 		}
 
+		/* set's the "user_nicename" attribute. */
+		function prepareNicename($userdata){
+			if(! $userdata['user_nicename']){
+				$userdata['user_nicename'] = $userdata['first_name']. " ". $userdata['last_name'];
+			}
+			$userdata['nickname'] = $userdata['user_nicename'];
+			error_log("Setting nickname: <" . $userdata['user_nicename'].">", 0);
+			return $userdata;
+		}
+
+		/* Checks whether one or more userattributes differ from the WP profile data. except 'user_nicename'*/
+		 function hasChangedAttributes($userdata, $account) {
+			foreach ($userdata as $key => $value){
+				if($value !== $account->get($key) && $key!=="user_nicename"){
+					error_log("Attribute changed: " . $key. ": ".$value."!=".$account->get($key)  , 0);
+					return true;
+				}
+			}
+			return false;
+		}
+
 		public static function readCasUID() {
 			$cas_user = phpCAS::getUser();
 			$cas_attributes = phpCAS::getAttributes();
 			$uid_option = get_option('uthsc_wpcas_uid');
+
 			error_log("$cas_user: " . $cas_user , 0);
-			return ($uid_option === "cas_user") ? $cas_user : $cas_attributes[$uid_option];
-			
+			error_log("$uid_option: " . $uid_option , 0);
+			$result = ($uid_option === "cas_user") ? $cas_user : $cas_attributes[$uid_option];
+			if( ! $result ){
+				echo 'Did not find cas_attribute ['. $uid_option. ']. Check WPCAS configuration "UID"';
+			} 
+			return $result;
 		}
 
 		//Custom logout function to bypass WordPress default logout and provide a custom redirect target (needs work).
@@ -324,7 +364,8 @@ if ( !class_exists('UTHSCWPCAS') ) {
 	}
 	 
 }
-// register widget
+// register WPCAS widget
+require_once('wpcas-widget.php');
 add_action('widgets_init', create_function('', 'return register_widget("wp_sso_widget");'));
 
 register_activation_hook( __FILE__, array( 'UTHSCWPCAS', 'activate' ) );
@@ -332,6 +373,6 @@ register_deactivation_hook( __FILE__, array( 'UTHSCWPCAS', 'deactivate' ) );
 register_uninstall_hook( __FILE__, array( 'UTHSCWPCAS', 'uninstall' ) );
 
 //Load plugin
-if( strpos($_SERVER["REQUEST_URI"], "?doNativeLogin=true") == false ){		
+if( strpos($_SERVER["REQUEST_URI"], "?doNativeLogin=true") == false /*&& strpos($_SERVER["REQUEST_URI"], "wp-login.php") == false*/){		
 	$uthscwpcas = new UTHSCWPCAS();
 }

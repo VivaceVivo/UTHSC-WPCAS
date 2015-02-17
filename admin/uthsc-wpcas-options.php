@@ -12,6 +12,7 @@ class UTHSC_WPCAS_Options {
 					'uthsc_wpcas_uid'			=> 'cas_user', // returns the $cas_user or the $cas_attributes[get_option('uthsc_wpcas_uid')]
 					'uthsc_wpcas_first_name'	=> 'firstname',
 					'uthsc_wpcas_last_name'		=> 'lastname',
+					'uthsc_wpcas_nickname'		=> 'nickname',
 					'uthsc_wpcas_context'		=> '/cas',
 					'uthsc_wpcas_cert_path'		=> str_replace( 'admin/','',plugin_dir_path( __FILE__) )  . 'caskey/cacerts_auth.pem',
 					'uthsc_wpcas_port'			=> '443',
