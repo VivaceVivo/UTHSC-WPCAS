@@ -55,8 +55,8 @@ class wp_sso_widget extends WP_Widget {
 	    <ul>
             <?php wp_register(); ?>
             <li><?php wp_loginout(); ?></li>
-            <?php if ( is_user_logged_in() && get_option('uthsc_wpcas_profil_page')) {  ?>
-            	<li><a href="<?php echo get_option('uthsc_wpcas_profil_page'); ?>?service=<?php echo home_url() ?>">Profil</a></li>
+            <?php if ( is_user_logged_in() && get_option('wpsso_profil_page')) {  ?>
+            	<li><a href="<?php echo get_option('wpsso_profil_page'); ?>?service=<?php echo home_url() ?>">Profil</a></li>
             <?php } ?>
         </ul>
 	   <?php

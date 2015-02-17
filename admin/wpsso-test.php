@@ -1,6 +1,6 @@
 <?php
 
-function uthsc_wpcas_test() {
+function wpsso_test() {
 
 	// Force CAS authentication on any page that includes this file
 	//phpCAS::forceAuthentication();
@@ -14,9 +14,9 @@ function uthsc_wpcas_test() {
 
 	<div class="wrap">
 		<div id="icon-options-general" class="icon32"></div>
-		<h2>UTHSC WP CAS Test</h2>
+		<h2>WP SSO Test</h2>
 
-		<p>If Customer 360 - WPCAS and your CAS server are configured properly, this page should display the attributes returned by CAS.</p>
+		<p>If Customer 360 - WPSSO and your CAS server are configured properly, this page should display the attributes returned by CAS.</p>
 
 		<h3>Session Info</h3>
 		<p>Some session info. Because, why not?</p>
@@ -29,7 +29,7 @@ function uthsc_wpcas_test() {
 		<h3>User Attributes</h3>
 		<p>These are the attributes returned by CAS and they may vary depending on what your CAS server is configured to return.<br />
 		If you want to use these attributes for new WordPress user accounts (firstname, lastname, email), 
-		the index names here should match the ones on the <a href="?page=uthsc-wpcas-preferences">CAS Settings page</a>.<br />
+		the index names here should match the ones on the <a href="?page=wpsso-preferences">CAS Settings page</a>.<br />
 		If your cas server is not configured to return the attributes, they will be blank and will need to be entered manually.
 		These attributes are not required for new user accounts to be created; all that is needed is the UID returned by cas. 
 		</p>

@@ -1,6 +1,6 @@
 <?php
 
-function uthsc_wpcas_preferences() {
+function wpsso_preferences() {
 	
 ?>
 
@@ -14,8 +14,8 @@ function uthsc_wpcas_preferences() {
 		?>
 
 		<h2 class="nav-tab-wrapper">  
-		  <a href="?page=uthsc-wpcas-settings&tab=cas-configuration" class="nav-tab <?php echo $active_tab == 'cas-configuration' ? 'nav-tab-active' : ''; ?> ">CAS Configuration</a>  
-		  <a href="?page=uthsc-wpcas-settings&tab=wpsso-options" class="nav-tab <?php echo $active_tab == 'wpsso-options' ? 'nav-tab-active' : ''; ?> ">WPSSO Options</a>  
+		  <a href="?page=wpsso-settings&tab=cas-configuration" class="nav-tab <?php echo $active_tab == 'cas-configuration' ? 'nav-tab-active' : ''; ?> ">CAS Configuration</a>  
+		  <a href="?page=wpsso-settings&tab=wpsso-options" class="nav-tab <?php echo $active_tab == 'wpsso-options' ? 'nav-tab-active' : ''; ?> ">WPSSO Options</a>  
 		</h2> 
 
 		<form method="post" action="options.php">
@@ -23,7 +23,7 @@ function uthsc_wpcas_preferences() {
 				
 			if( $active_tab == 'cas-configuration' ) {
 				
-				settings_fields( 'uthsc-wpcas-configuration' );
+				settings_fields( 'wpsso-configuration' );
 				
 				?>
 
@@ -32,12 +32,12 @@ function uthsc_wpcas_preferences() {
 					<p>Defaults to "auth.uthsc.edu"</p>
 					<ul>
 						<li>
-							<label for="uthsc_wpcas_host">CAS Host</label>
+							<label for="wpsso_host">CAS Host</label>
 							<input 
 								type="text" 
-								name="uthsc_wpcas_host" 
-								value="<?php echo get_option('uthsc_wpcas_host')?>"
-								id="uthsc_wpcas_host" 
+								name="wpsso_host" 
+								value="<?php echo get_option('wpsso_host')?>"
+								id="wpsso_host" 
 								/>
 							
 						</li>
@@ -49,12 +49,12 @@ function uthsc_wpcas_preferences() {
 					<p>Defaults to "/cas"</p>
 					<ul>
 						<li>
-							<label for="uthsc_wpcas_context">CAS Context</label>
+							<label for="wpsso_context">CAS Context</label>
 							<input 
 								type="text" 
-								name="uthsc_wpcas_context" 
-								value="<?php echo get_option('uthsc_wpcas_context')?>"
-								id="uthsc_wpcas_context" 
+								name="wpsso_context" 
+								value="<?php echo get_option('wpsso_context')?>"
+								id="wpsso_context" 
 								/>
 							
 						</li>
@@ -66,12 +66,12 @@ function uthsc_wpcas_preferences() {
 					<p>Defaults to 443</p>
 					<ul>
 						<li>
-							<label for="uthsc_wpcas_port">CAS Port</label>
+							<label for="wpsso_port">CAS Port</label>
 							<input
 								type="text" 
-								name="uthsc_wpcas_port" 
-								value="<?php echo get_option('uthsc_wpcas_port')?>"
-								id="uthsc_wpcas_port" 
+								name="wpsso_port" 
+								value="<?php echo get_option('wpsso_port')?>"
+								id="wpsso_port" 
 							/>
 						</li>
 					</ul>
@@ -82,13 +82,13 @@ function uthsc_wpcas_preferences() {
 					<p>Path to CAS Cert</p>
 					<ul>
 						<li>
-							<label for="uthsc_wpcas_cert_path">CAS Cert Path</label>
+							<label for="wpsso_cert_path">CAS Cert Path</label>
 							<input
 								size="70"
 								type="text" 
-								name="uthsc_wpcas_cert_path" 
-								value="<?php echo get_option('uthsc_wpcas_cert_path')?>"
-								id="uthsc_wpcas_cert_path" 
+								name="wpsso_cert_path" 
+								value="<?php echo get_option('wpsso_cert_path')?>"
+								id="wpsso_cert_path" 
 								/>
 							
 						</li>
@@ -100,51 +100,51 @@ function uthsc_wpcas_preferences() {
 					<p>Array indexes returned by cas that will be used as args for wp_insert() when new users are created. WordPress username will use uid returned by CAS.</p>
 					<ul>
 						<li>
-							<label for="uthsc_wpcas_uid">UID</label>
+							<label for="wpsso_uid">UID</label>
 							<input
 								type="text"
-								name="uthsc_wpcas_uid"
-								value="<?php echo get_option('uthsc_wpcas_uid')?>"
-								id="uthsc_wpcas_uid"
+								name="wpsso_uid"
+								value="<?php echo get_option('wpsso_uid')?>"
+								id="wpsso_uid"
 							/>
 						</li>
 						<li>
-							<label for="uthsc_wpcas_first_name">First Name</label>
+							<label for="wpsso_first_name">First Name</label>
 							<input
 								type="text"
-								name="uthsc_wpcas_first_name"
-								value="<?php echo get_option('uthsc_wpcas_first_name')?>"
-								id="uthsc_wpcas_first_name"
-							/>
-						</li>
-
-						<li>
-							<label for="uthsc_wpcas_last_name">Last Name</label>
-							<input
-								type="text"
-								name="uthsc_wpcas_last_name"
-								value="<?php echo get_option('uthsc_wpcas_last_name')?>"
-								id="uthsc_wpcas_last_name"
+								name="wpsso_first_name"
+								value="<?php echo get_option('wpsso_first_name')?>"
+								id="wpsso_first_name"
 							/>
 						</li>
 
 						<li>
-							<label for="uthsc_wpcas_user_email">Email</label>
+							<label for="wpsso_last_name">Last Name</label>
 							<input
 								type="text"
-								name="uthsc_wpcas_user_email"
-								value="<?php echo get_option('uthsc_wpcas_user_email')?>"
-								id="uthsc_wpcas_user_email"
+								name="wpsso_last_name"
+								value="<?php echo get_option('wpsso_last_name')?>"
+								id="wpsso_last_name"
 							/>
 						</li>
 
 						<li>
-							<label for="uthsc_wpcas_nickname">Nickname</label>
+							<label for="wpsso_user_email">Email</label>
 							<input
 								type="text"
-								name="uthsc_wpcas_nickname"
-								value="<?php echo get_option('uthsc_wpcas_nickname')?>"
-								id="uthsc_wpcas_nickname"
+								name="wpsso_user_email"
+								value="<?php echo get_option('wpsso_user_email')?>"
+								id="wpsso_user_email"
+							/>
+						</li>
+
+						<li>
+							<label for="wpsso_nickname">Nickname</label>
+							<input
+								type="text"
+								name="wpsso_nickname"
+								value="<?php echo get_option('wpsso_nickname')?>"
+								id="wpsso_nickname"
 							/>
 						</li>
 
@@ -155,7 +155,7 @@ function uthsc_wpcas_preferences() {
 
 			} else {
 
-				settings_fields( 'uthsc-wpcas-plugin-options' );
+				settings_fields( 'wpsso-plugin-options' );
 
 			
 				/*
@@ -164,10 +164,10 @@ function uthsc_wpcas_preferences() {
 					<p>If this is turned on, users will be forced to log in to see the site</p>
 					<ul>
 						<li>
-								<label for="uthsc_wpcas_lockdown_off">Off</label>
-								<input type="radio" name="uthsc_wpcas_lockdown" id="uthsc_wpcas_lockdown_off" value="off" <?php  echo get_option('uthsc_wpcas_lockdown') == 'off' ? 'checked="checked"' : '' ?> />
-								<label for="uthsc_wpcas_lockdown_on">On</label>
-								<input type="radio" name="uthsc_wpcas_lockdown" id="uthsc_wpcas_lockdown_on" value="on"  <?php  echo get_option('uthsc_wpcas_lockdown') == 'on' ? 'checked="checked"' : '' ?> />
+								<label for="wpsso_lockdown_off">Off</label>
+								<input type="radio" name="wpsso_lockdown" id="wpsso_lockdown_off" value="off" <?php  echo get_option('wpsso_lockdown') == 'off' ? 'checked="checked"' : '' ?> />
+								<label for="wpsso_lockdown_on">On</label>
+								<input type="radio" name="wpsso_lockdown" id="wpsso_lockdown_on" value="on"  <?php  echo get_option('wpsso_lockdown') == 'on' ? 'checked="checked"' : '' ?> />
 						</li>
 					</ul>
 				</fieldset>
@@ -178,9 +178,9 @@ function uthsc_wpcas_preferences() {
 					<ul>
 						<li>
 								<label for="wpcas_restrict_new_users_off">Off</label>
-								<input type="radio" name="uthsc_wpcas_restrict_new_users" id="uthsc_wpcas_restrict_new_users_off" value="off" <?php  echo get_option('uthsc_wpcas_restrict_new_users') == 'off' ? 'checked="checked"' : '' ?> />
+								<input type="radio" name="wpsso_restrict_new_users" id="wpsso_restrict_new_users_off" value="off" <?php  echo get_option('wpsso_restrict_new_users') == 'off' ? 'checked="checked"' : '' ?> />
 								<label for="wpcas_restrict_new_users_on">On</label>
-								<input type="radio" name="uthsc_wpcas_restrict_new_users" id="uthsc_wpcas_restrict_new_users_on" value="on"  <?php  echo get_option('uthsc_wpcas_restrict_new_users') == 'on' ? 'checked="checked"' : '' ?> />
+								<input type="radio" name="wpsso_restrict_new_users" id="wpsso_restrict_new_users_on" value="on"  <?php  echo get_option('wpsso_restrict_new_users') == 'on' ? 'checked="checked"' : '' ?> />
 						</li>
 					</ul>
 				</fieldset>
@@ -191,10 +191,10 @@ function uthsc_wpcas_preferences() {
 					<p>Updates WordPress profile on every login.</p>
 					<ul>
 						<li>
-								<label for="uthsc_wpcas_update_acct_off">Off</label>
-								<input type="radio" name="uthsc_wpcas_update_acct" id="uthsc_wpcas_update_acct_off" value="off" <?php  echo get_option('uthsc_wpcas_update_acct') == 'off' ? 'checked="checked"' : '' ?> />
-								<label for="uthsc_wpcas_update_acct_on">On</label>
-								<input type="radio" name="uthsc_wpcas_update_acct" id="uthsc_wpcas_update_acct_on" value="on"  <?php  echo get_option('uthsc_wpcas_update_acct') == 'on' ? 'checked="checked"' : '' ?> />
+								<label for="wpsso_update_acct_off">Off</label>
+								<input type="radio" name="wpsso_update_acct" id="wpsso_update_acct_off" value="off" <?php  echo get_option('wpsso_update_acct') == 'off' ? 'checked="checked"' : '' ?> />
+								<label for="wpsso_update_acct_on">On</label>
+								<input type="radio" name="wpsso_update_acct" id="wpsso_update_acct_on" value="on"  <?php  echo get_option('wpsso_update_acct') == 'on' ? 'checked="checked"' : '' ?> />
 						</li>
 					</ul>
 				</fieldset>
@@ -204,12 +204,12 @@ function uthsc_wpcas_preferences() {
 					<p>Url of the (optional) CAS-Profile page. </p>
 					<ul>
 						<li>
-								<label for="uthsc_wpcas_profil_page">URL</label>
+								<label for="wpsso_profil_page">URL</label>
 								<input
 								type="text"
-								name="uthsc_wpcas_profil_page"
-								value="<?php echo get_option('uthsc_wpcas_profil_page')?>"
-								id="uthsc_wpcas_profil_page"
+								name="wpsso_profil_page"
+								value="<?php echo get_option('wpsso_profil_page')?>"
+								id="wpsso_profil_page"
 							/>
 						</li>
 					</ul>
@@ -220,12 +220,12 @@ function uthsc_wpcas_preferences() {
 					<p>Pages matching the given pattern use the standard WordPress login. (leave empty to turn off native login)</p>
 					<ul>
 						<li>
-								<label for="uthsc_wpcas_native_login_url_pattern">substring</label>
+								<label for="wpsso_native_login_url_pattern">substring</label>
 								<input
 								type="text"
-								name="uthsc_wpcas_native_login_url_pattern"
-								value="<?php echo get_option('uthsc_wpcas_native_login_url_pattern')?>"
-								id="uthsc_wpcas_native_login_url_pattern"
+								name="wpsso_native_login_url_pattern"
+								value="<?php echo get_option('wpsso_native_login_url_pattern')?>"
+								id="wpsso_native_login_url_pattern"
 							/>
 						</li>
 					</ul>

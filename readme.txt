@@ -1,10 +1,10 @@
-=== UTHSC WPCAS ===
-Contributors: gpspake
+=== Customer 360 WPSSO ===
+Contributors: PTR
 Donate Link: http://uthsc.edu
-Tags: cas, authentication, central authentication service, phpCAS
+Tags: cas, authentication, central authentication service, phpCAS, single sign-on, SSO  
 Requires at least: 3.0.1
 Tested up to: 3.9
-Stable tag: 0.2.2
+Stable tag: 0.3.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
