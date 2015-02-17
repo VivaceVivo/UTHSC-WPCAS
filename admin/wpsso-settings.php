@@ -15,7 +15,7 @@ function uthsc_wpcas_preferences() {
 
 		<h2 class="nav-tab-wrapper">  
 		  <a href="?page=uthsc-wpcas-settings&tab=cas-configuration" class="nav-tab <?php echo $active_tab == 'cas-configuration' ? 'nav-tab-active' : ''; ?> ">CAS Configuration</a>  
-		  <a href="?page=uthsc-wpcas-settings&tab=uthsc-wpcas-options" class="nav-tab <?php echo $active_tab == 'uthsc-wpcas-options' ? 'nav-tab-active' : ''; ?> ">WPCAS Options</a>  
+		  <a href="?page=uthsc-wpcas-settings&tab=wpsso-options" class="nav-tab <?php echo $active_tab == 'wpsso-options' ? 'nav-tab-active' : ''; ?> ">WPSSO Options</a>  
 		</h2> 
 
 		<form method="post" action="options.php">

@@ -1,9 +1,9 @@
 <?php
 
 //Stores settings groups, options and defaults for the plugin
-class UTHSC_WPCAS_Options {
+class WPSSO_Options {
 
-	function uthsc_wpcas_settings() {
+	function wpsso_settings() {
 
 		$settings = array(
 				'uthsc-wpcas-configuration' 	=> array (
@@ -21,7 +21,7 @@ class UTHSC_WPCAS_Options {
 					'uthsc_wpcas_update_acct'	=> 'off',
 					'uthsc_wpcas_lockdown'		=> 'off',
 					'uthsc_wpcas_restrict_new_users'	=> 'off',
-					'uthsc_wpcas_native_login_url_pattern' => '',
+					'uthsc_wpcas_native_login_url_pattern' => 'wordpress/wp-admin',
 					'uthsc_wpcas_profil_page' => ''
 				)
 			);

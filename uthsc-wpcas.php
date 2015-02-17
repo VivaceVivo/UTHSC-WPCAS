@@ -3,7 +3,7 @@
  * Plugin Name: Customer 360 - WPCAS
  * Plugin URI: https://github.com/VivaceVivo/UTHSC-WPCAS
  * Description: A plugin that uses phpCAS to integrate CAS with WordPress.
- * Author: George Spake - UTHSC, Patrick Trapp - CGI
+ * Author: Patrick Trapp - CGI... based on the works by George Spake - UTHSC
  * Version: 0.3.0
  * Author URI: http://cgi.com/
  * License: GPLv3
@@ -52,9 +52,9 @@ if ( !class_exists('UTHSCWPCAS') ) {
 
 			//Add options to admin menu
 			if (is_admin()) {
-				include_once('admin/uthsc-wpcas-about.php');
-				include_once('admin/uthsc-wpcas-settings.php');
-				include_once('admin/uthsc-wpcas-test.php');
+				include_once('admin/wpsso-about.php');
+				include_once('admin/wpsso-settings.php');
+				include_once('admin/wpsso-test.php');
 				add_action('admin_menu', array($this, 'add_options_pages'));
 			}
 
@@ -70,7 +70,7 @@ if ( !class_exists('UTHSCWPCAS') ) {
 			}
 
 			//Get wpcas options
-			require_once('admin/uthsc-wpcas-options.php');
+			require_once('admin/wpsso-options.php');
 		}
 
 		protected function wp_cas_authentication_hooks(){
@@ -83,44 +83,44 @@ if ( !class_exists('UTHSCWPCAS') ) {
 			add_action('retrieve_password', array('UTHSCWPCAS', 'disable_function'));
 			add_action('password_reset', array('UTHSCWPCAS', 'disable_function'));
 			add_filter('show_password_fields', array(&$this, 'show_password_fields'));
-			add_action('check_passwords', array('UTHSCWPCAS', 'check_passwords'), 10, 3);
+			//add_action('check_passwords', array('UTHSCWPCAS', 'check_passwords'), 10, 3);
 			
 			add_filter('login_url', array(&$this, 'wpcas_login_url'),10,3);
 			add_filter( 'register_url', array(&$this, 'wpcas_register_url'),10,3 );
 		}
 
-		public static function check_passwords() {
-			// TODO
-		}
+		// public static function check_passwords() {
+		// 	// nothing to do
+		// }
 
-		//Register settings in lib/wpcas-options.php
+		//Register settings in admin/wpsso-options.php
 		public function register_wpcas_settings() {
-			$wpcas_options = new UTHSC_WPCAS_Options;
+			$wpcas_options = new WPSSO_Options;
 
-			foreach ( $wpcas_options->uthsc_wpcas_settings() as $group => $options) {
+			foreach ( $wpcas_options->wpsso_settings() as $group => $options) {
 				foreach ($options as $option => $default){
 					register_setting($group, $option);
 				}
 			}
 		}
 
-		//Update settings in lib/wpcas-options.php
+		//Update settings in admin/wpsso-options.php
 		public static function activate() {
-			$wpcas_options = new UTHSC_WPCAS_Options;
+			$wpcas_options = new WPSSO_Options;
 			
-			foreach ( $wpcas_options->uthsc_wpcas_settings() as $group => $options) {
+			foreach ( $wpcas_options->wpsso_settings() as $group => $options) {
 				foreach ($options as $option => $default){
 					// error_log($option . " -> " . $default, 0);
 					update_option($option, $default);
 				}
-			}
+			}       
 		}
 
 		//Unregister settings in lib/wpcas-options.php
 		public static function deactivate() {
-			$wpcas_options = new UTHSC_WPCAS_Options;
+			$wpcas_options = new WPSSO_Options;
 			
-			foreach ( $wpcas_options->uthsc_wpcas_settings() as $group => $options) {
+			foreach ( $wpcas_options->wpsso_settings() as $group => $options) {
 				foreach ($options as $option => $default){
 					update_option($option, '');
 					unregister_setting($group, $option);
@@ -130,9 +130,9 @@ if ( !class_exists('UTHSCWPCAS') ) {
 
 		//Delete settings in lib/wpcas-options.php
 		public static function uninstall() {
-			$wpcas_options = new UTHSC_WPCAS_Options;
+			$wpcas_options = new WPSSO_Options;
 			
-			foreach ( $wpcas_options->uthsc_wpcas_settings() as $group => $options) {
+			foreach ( $wpcas_options->wpsso_settings() as $group => $options) {
 				foreach ($options as $option => $default){
 					delete_option($option);
 				}
@@ -144,7 +144,7 @@ if ( !class_exists('UTHSCWPCAS') ) {
 
 			add_menu_page('UTHSC WP CAS', 'UTHSC WP CAS', 'administrator', 'uthsc-wpcas-settings', 'uthsc_wpcas_preferences', $icon, '98.9');
 			add_submenu_page('uthsc-wpcas-settings', 'CAS Test', 'CAS Test', 'administrator', 'uthsc-wpcas-test', 'uthsc_wpcas_test');
-			add_submenu_page('uthsc-wpcas-settings', 'About', 'About', 'administrator', 'uthsc-wpcas-about', 'uthsc_wpcas_about');		
+			add_submenu_page('uthsc-wpcas-settings', 'About', 'About', 'administrator', 'wpsso_about', 'wpsso_about');		
 		}
 
 		public function bypass_login(){
@@ -161,11 +161,13 @@ if ( !class_exists('UTHSCWPCAS') ) {
 		}
 
 		public function wpcas_login_url($redirect = '', $force_reauth = false) {
+
 			$pattern = get_option('uthsc_wpcas_native_login_url_pattern');
 			if($pattern){
 				if( strpos ($_SERVER["REQUEST_URI"], $pattern ) ) {	
 						
 					error_log("login URL: " . site_url('wp-login.php', 'login'), 0);
+					
 					return site_url('wp-login.php', 'login'). "?doNativeLogin=true";
 				}
 			}
@@ -179,7 +181,7 @@ if ( !class_exists('UTHSCWPCAS') ) {
 				} else {
 				 	$redirect = $login_url;
 				}
-					$login_url = add_query_arg('redirect_to', urlencode($redirect), $login_url);
+				$login_url = add_query_arg('redirect_to', urlencode($redirect), $login_url);
 
 			}
 
@@ -226,6 +228,7 @@ if ( !class_exists('UTHSCWPCAS') ) {
 			// For quick testing you can disable SSL validation of the CAS server.
 			// THIS SETTING IS NOT RECOMMENDED FOR PRODUCTION.
 			// VALIDATING THE CAS SERVER IS CRUCIAL TO THE SECURITY OF THE CAS PROTOCOL!
+			// TODO PTR
 			phpCAS::setNoCasServerValidation();
 
 			// Handle SAML logout requests that emanate from the CAS host exclusively.
@@ -258,7 +261,7 @@ if ( !class_exists('UTHSCWPCAS') ) {
 					// TODO PTR make all attibutes optional: last_name, first_name, user_email, user_nicename !!!
 
 
-					
+
 				'user_login'		=>	$cas_user,
 				'last_name'			=>	$cas_attributes[get_option('uthsc_wpcas_last_name')],
 				'first_name'		=>	is_array( $cas_attributes[get_option('uthsc_wpcas_first_name')] ) ? $cas_attributes[get_option('uthsc_wpcas_first_name')]['1'] : $cas_attributes[get_option('uthsc_wpcas_first_name')],
@@ -347,7 +350,6 @@ if ( !class_exists('UTHSCWPCAS') ) {
 					phpCAS::logoutWithRedirectService(site_url());
 				}
 			}
-
 			exit();
 		}
 
@@ -365,14 +367,14 @@ if ( !class_exists('UTHSCWPCAS') ) {
 	 
 }
 // register WPCAS widget
-require_once('wpcas-widget.php');
+require_once('wpsso-widget.php');
 add_action('widgets_init', create_function('', 'return register_widget("wp_sso_widget");'));
 
 register_activation_hook( __FILE__, array( 'UTHSCWPCAS', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'UTHSCWPCAS', 'deactivate' ) );
 register_uninstall_hook( __FILE__, array( 'UTHSCWPCAS', 'uninstall' ) );
 
-//Load plugin
-if( strpos($_SERVER["REQUEST_URI"], "?doNativeLogin=true") == false /*&& strpos($_SERVER["REQUEST_URI"], "wp-login.php") == false*/){		
+//Load plugin if not 'doNativeLogin'
+if( strpos($_SERVER["REQUEST_URI"], "?doNativeLogin=true") == false ){		
 	$uthscwpcas = new UTHSCWPCAS();
 }
