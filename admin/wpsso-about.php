@@ -11,9 +11,12 @@ function wpsso_about() {
 		<p>The plugin was extended to support also the older CAS-protocol and adds some features:</p>
 		<ol>
 			<li>configurable mapping of the CAS-UID</li>
+			<li>configurable mapping for the firstname, lastname, email and nickname profile fields.</li>
+			<li>alternatively the nickname may be set to firstname lastname or the wordpress default.</li>
 			<li>update of the wordpress profile on each login</li>
-			<li>Hybrid login (wordpress native login for selected path)</li>
+			<li>Hybrid login (wordpress native login for a selected path)</li>
 			<li>WP-CAS widget with login/logout, profile and registration link</li>
+
 		</ol>
 		<p>This plugin was developed for the CGI "Customer 360" project to enable CAS-login for any wordpress site.</p>
 	

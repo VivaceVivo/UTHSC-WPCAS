@@ -223,14 +223,16 @@ if ( !class_exists('WPSSO') ) {
 			
 			// For production use set the CA certificate that is the issuer of the cert
 			// on the CAS server and uncomment the line below
-			//phpCAS::setCasServerCACert(get_option('wpsso_cert_path'));
-
-			// For quick testing you can disable SSL validation of the CAS server.
-			// THIS SETTING IS NOT RECOMMENDED FOR PRODUCTION.
-			// VALIDATING THE CAS SERVER IS CRUCIAL TO THE SECURITY OF THE CAS PROTOCOL!
-			// TODO PTR
-			phpCAS::setNoCasServerValidation();
-
+			$certPath = get_option('wpsso_cert_path');
+			if(isset($certPath)){
+				phpCAS::setCasServerCACert(get_option('wpsso_cert_path'));
+			}else{
+				// For quick testing you can disable SSL validation of the CAS server.
+				// THIS SETTING IS NOT RECOMMENDED FOR PRODUCTION.
+				// VALIDATING THE CAS SERVER IS CRUCIAL TO THE SECURITY OF THE CAS PROTOCOL!
+				// TODO PTR
+				phpCAS::setNoCasServerValidation();
+			}
 			// Handle SAML logout requests that emanate from the CAS host exclusively.
 			// Failure to restrict SAML logout requests to authorized hosts could
 			// allow denial of service attacks where at the least the server is
@@ -304,7 +306,8 @@ if ( !class_exists('WPSSO') ) {
 
 		/* set's the "user_nicename" attribute. */
 		function prepareNicename($userdata){
-			if(! $userdata['user_nicename']){
+			if(! $userdata['user_nicename'] && get_option('wpsso_nickname_realname')==='on'){
+				// if unset - set nickname to real name:
 				$userdata['user_nicename'] = $userdata['first_name']. " ". $userdata['last_name'];
 			}
 			$userdata['nickname'] = $userdata['user_nicename'];
@@ -315,7 +318,7 @@ if ( !class_exists('WPSSO') ) {
 		/* Checks whether one or more userattributes differ from the WP profile data. except 'user_nicename'*/
 		 function hasChangedAttributes($userdata, $account) {
 			foreach ($userdata as $key => $value){
-				if($value !== $account->get($key) && $key!=="user_nicename"){
+				if($value !== $account->get($key) && $key!=="user_nicename" && $key!=="nickname"){
 					error_log("Attribute changed: " . $key. ": ".$value."!=".$account->get($key)  , 0);
 					return true;
 				}

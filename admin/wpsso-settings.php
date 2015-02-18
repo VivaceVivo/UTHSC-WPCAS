@@ -146,8 +146,11 @@ function wpsso_preferences() {
 								value="<?php echo get_option('wpsso_nickname')?>"
 								id="wpsso_nickname"
 							/>
+							<label for="wpsso_nickname_realname_off">WP default</label>
+								<input type="radio" name="wpsso_nickname_realname" id="wpsso_nickname_realname_off" value="off" <?php  echo get_option('wpsso_nickname_realname') == 'off' ? 'checked="checked"' : '' ?> />
+								<label for="wpsso_update_acct_on">use real name</label>
+							<input type="radio" name="wpsso_nickname_realname" id="wpsso_nickname_realname_on" value="on"  <?php  echo get_option('wpsso_nickname_realname') == 'on' ? 'checked="checked"' : '' ?> />
 						</li>
-
 					</ul>
 				</fieldset>
 

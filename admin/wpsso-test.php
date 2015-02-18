@@ -81,7 +81,7 @@ function wpsso_test() {
 
 				$cas_attributes = phpCAS::getAttributes();
 				
-				$wp_attributes = get_user_by( 'login', UTHSCWPCAS::readCasUID());
+				$wp_attributes = get_user_by( 'login', WPSSO::readCasUID());
 				
 				$wp_display_attributes = array('ID', 'user_nicename', 'user_login', 'user_email', 'user_registered', 'user_url', 'display_name', 'user_status', 'user_activation_key');
 
